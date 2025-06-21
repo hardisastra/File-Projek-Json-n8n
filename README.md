@@ -15,4 +15,4 @@ Projek json untuk n8n.io
 
 
 ## Setup n8n untuk pemula
-- [Tes Webhook untuk n8n lokal tanpa hosting](.Tes-webhook-n8n-lokal.md)
+- [Tes Webhook untuk n8n lokal tanpa hosting](./Tes-webhook-n8n-lokal.md)
