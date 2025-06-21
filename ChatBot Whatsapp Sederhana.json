@@ -1,0 +1,225 @@
+{
+  "name": "ChatBot Whatsapp Sederhana",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c2aae215-5e72-4eee-b0cb-29d3bfc8199b",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        -100
+      ],
+      "id": "518d736a-51b6-44cb-af18-29f08dc1f6ac",
+      "name": "Webhook",
+      "webhookId": "c2aae215-5e72-4eee-b0cb-29d3bfc8199b"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.data.body }}",
+        "options": {
+          "systemMessage": "Nama kamu adalah KattaBot. Kamu adalah Customer Service virtual dari toko kopi botolan Yoo Katta, sebuah usaha kopi lokal dengan konsep ready-to-go & take away. Tugasmu adalah melayani pelanggan secara ramah, cepat, dan informatif via chat.\n\nSelalu sapa pelanggan dengan ramah seperti: \"Hai, teman kopi!\" atau \"Hai, ada yang bisa Katta bantu hari ini?\"\n\nMenu yang kamu miliki terdiri dari dua ukuran:\n\n📌 **Menu Kopi 1 Liter**:\n- Butterscotch - Rp60.000\n- Karamel - Rp60.000\n- Tiramisu - Rp60.000\n- Kopsus Creamy - Rp55.000\n- Gula Aren - Rp55.000\n- Black - Rp45.000\n\n📌 **Menu Kopi 200ml**:\n- Butterscotch - Rp14.000\n- Karamel - Rp14.000\n- Tiramisu - Rp14.000\n- Kopsus Creamy - Rp13.000\n- Gula Aren - Rp13.000\n- Black - Rp10.000\n\n❗Jika ada pelanggan bertanya cara pemesanan:\n➡ Jawab bahwa pemesanan bisa dilakukan melalui WhatsApp atau GoFood (sesuaikan jika sudah ada channel).\n\n❗Jika pelanggan tanya varian rasa, kamu boleh bantu dengan memberikan rekomendasi sesuai selera mereka:\nContoh:\n- \"Kalau suka yang creamy dan manis, Butterscotch atau Tiramisu cocok banget!\"\n- \"Kalau suka kopi yang bold, varian Black wajib dicoba.\"\n\n❗Kalau pelanggan tanya lokasi, katakan bahwa Yoo Katta adalah konsep virtual cafe / cloud kitchen yang hanya melayani **pesanan online dan take away**.\n\n❗Jika pelanggan bertanya tentang promo, katakan: \"Saat ini belum ada promo khusus, tapi pantau terus Instagram kami di @yookatta.id untuk update terbaru, ya!\"\n\n❗Akhiri percakapan dengan hangat, contoh:\n- \"Terima kasih sudah mampir ke Yoo Katta, semoga harimu secerah aroma kopi kami ☕😊\"\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        -100
+      ],
+      "id": "9cddc04a-6e93-4f9f-8055-975d99599850",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        120
+      ],
+      "id": "33bb8121-3a2e-4ffb-aa5f-6bd0aead5512",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nskgYMj3pdmGnSsJ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.data.body }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        120
+      ],
+      "id": "3d5be6e9-011f-46bb-86ba-dbb00e92607f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ultramsg.com/instance123793/messages/chat",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "cf87gc11ncq124pz"
+            },
+            {
+              "name": "to",
+              "value": "=  {{ $('Webhook').item.json.body.data.from }}"
+            },
+            {
+              "name": "body",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "priority",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -100
+      ],
+      "id": "3f1280f3-87f6-46bf-8c28-eadc7d96ba6f",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "makinamaze.app.n8n.cloud",
+            "user-agent": "axios/1.9.0",
+            "content-length": "451",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "65.109.124.162",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "FI",
+            "cf-ray": "94a8f30146b40b9c-ARN",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "65.109.124.162, 104.23.221.41",
+            "x-forwarded-host": "makinamaze.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-26-7b6dc7c86c-dvg86",
+            "x-is-trusted": "yes",
+            "x-real-ip": "65.109.124.162"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_type": "message_received",
+            "instanceId": "123793",
+            "id": "",
+            "referenceId": "",
+            "hash": "4aba65198ca0b202aec449978fc6e39f",
+            "data": {
+              "id": "false_6281223244041@c.us_3FA739A980C24A21132B",
+              "from": "6281223244041@c.us",
+              "to": "6281299725010@c.us",
+              "author": "",
+              "pushname": "Hardi Suardi Sastra",
+              "ack": "",
+              "type": "chat",
+              "body": "hallo",
+              "media": "",
+              "fromMe": false,
+              "self": false,
+              "isForwarded": false,
+              "isMentioned": false,
+              "quotedMsg": {},
+              "mentionedIds": [],
+              "time": 1749056035
+            }
+          },
+          "webhookUrl": "https://makinamaze.app.n8n.cloud/webhook-test/c2aae215-5e72-4eee-b0cb-29d3bfc8199b",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b87e1f53-a5ac-4d9a-bd4c-56f4f6c95851",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a2578f324c64ae031388e1eccd6c9da2c5d133e139014606f0e94be75f9e5a33"
+  },
+  "id": "2HkfHHEvrQKYLq0v",
+  "tags": []
+}

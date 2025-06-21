@@ -1,0 +1,157 @@
+{
+  "name": "input data otomatis ke sheet",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -40
+      ],
+      "id": "215e05ef-055b-4882-8629-4c9029395c39",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "920e1a8e-6052-4cb9-b16b-c1b41f8895ce",
+              "name": "isi chat",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -180,
+        -40
+      ],
+      "id": "182aa407-22dd-4d6c-b8d9-9c9f06f6db0e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wA2WZKjMXFvLck-t9XxETM_oWHE8o0gokPRitsBtKVw",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wA2WZKjMXFvLck-t9XxETM_oWHE8o0gokPRitsBtKVw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wA2WZKjMXFvLck-t9XxETM_oWHE8o0gokPRitsBtKVw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "isi chat": "={{ $('When chat message received').item.json.chatInput }}"
+          },
+          "matchingColumns": [
+            "isi chat"
+          ],
+          "schema": [
+            {
+              "id": "isi chat",
+              "displayName": "isi chat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        140,
+        -40
+      ],
+      "id": "094c0730-9dfb-4bd7-bb67-79612019ab1d",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DiVnwSi0NuNjs9ox",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -220
+      ],
+      "id": "4ba0a897-c5bd-4dfc-99eb-546b883279d1",
+      "name": "When chat message received",
+      "webhookId": "bc6ff00d-205a-4d19-96d5-9f64e21147a9"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bb77cae0-f98c-42e8-b3e7-e6c08893aacd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b049fdc00c4e5016f217d3606666fd1b969a7aee41a995048a732ec0d4cb8cc"
+  },
+  "id": "9P9LIsvT8d16tWKB",
+  "tags": []
+}

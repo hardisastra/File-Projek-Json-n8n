@@ -1,0 +1,117 @@
+{
+  "name": "Google gemini Test",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        -240
+      ],
+      "id": "eda6cb25-28ec-44c8-88a7-90af61e41a43",
+      "name": "When chat message received",
+      "webhookId": "dcc9bbc3-28ed-4c9b-8ca8-c4fbbb583968"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "2779538c-8a86-44fc-9de6-9b003bc4ac9d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -60
+      ],
+      "id": "2debaab5-e6e2-4b40-9f7e-4e76a1754670",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PEu4GN9ncAorTvOt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "saya ingin kamu adalah barista sekaligus waiter untuk sebuah coffee shop dan kamu menjual berbagai macam kopi seperti :\n\nes kopi susu rasa butterscotch : rp. 12.000\nes kopi susu rasa caramel : rp 12.000\nes kopi susu spanish latte : rp 10.000\n\nberikan pelayanan terbaik"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -260
+      ],
+      "id": "f7e61bcc-291d-4127-99e1-0dc5cd5f8e7b",
+      "name": "AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d53224d6-1c3d-44ab-811a-dd9ff0436540",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b049fdc00c4e5016f217d3606666fd1b969a7aee41a995048a732ec0d4cb8cc"
+  },
+  "id": "oBaeQtRXyjcv6kC2",
+  "tags": []
+}

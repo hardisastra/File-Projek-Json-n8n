@@ -1,0 +1,414 @@
+{
+  "name": "jenis jenis nodes",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Manual Trigger\nDigunakan untuk menjalankan workflow secara manual dari dalam editor n8n saat kamu sedang testing atau mencoba alur."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        -680
+      ],
+      "id": "8aa90af8-0c6a-4a58-83a6-8291392232f5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Schedule Trigger\nBerguna untuk menjalankan workflow secara otomatis berdasarkan waktu tertentu, misalnya setiap hari jam 7 pagi atau setiap 1 jam sekali."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        -500
+      ],
+      "id": "a0f02e04-f170-4fbd-aca1-053e6b8c4259",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Webhook Trigger\nMemungkinkan workflow berjalan ketika menerima data dari luar (via URL). Cocok banget kalau kamu ingin n8n menerima data dari form, website, API, atau tools lain.",
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        -320
+      ],
+      "id": "e62a317d-5a79-4932-af68-8d04bdbfc4b9",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Telegram Trigger (On Message Received)\nUntuk menjalankan workflow saat ada pesan masuk ke bot Telegram kamu. Sangat berguna kalau kamu bikin bot otomatis.",
+        "height": 200,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        -140
+      ],
+      "id": "fd20e7a7-1b17-40a8-9749-86eab8365777",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Email / Gmail Trigger (Get a Message)\nWorkflow akan aktif ketika mendapat email baru, cocok untuk membuat bot yang membaca dan merespons email.",
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        80
+      ],
+      "id": "85940350-5621-41e8-b4f7-1aa200b183fb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Airtable Trigger (On Record Event)\nMemicu workflow saat ada data baru, diubah, atau dihapus di database Airtable. Berguna untuk sinkronisasi data otomatis.",
+        "height": 180,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        260
+      ],
+      "id": "676bbf32-85ad-4490-a8ec-dba3994fb43a",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Execute Workflow Trigger\nMemicu workflow dari workflow lain, berguna kalau kamu ingin membuat modul atau fungsi terpisah yang bisa dipanggil berkali-kali.",
+        "height": 180,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        460
+      ],
+      "id": "7faab184-4559-47a0-bccb-abbbc2c28eba",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        -480
+      ],
+      "id": "7d732384-82e7-469c-89b7-e26a6f568157",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "path": "dadd6f2c-232d-45b8-9722-68c226a0d0c9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        -300
+      ],
+      "id": "cdc2dfb6-898b-453f-a5a9-d4bef1a26229",
+      "name": "Webhook",
+      "webhookId": "dadd6f2c-232d-45b8-9722-68c226a0d0c9"
+    },
+    {
+      "parameters": {
+        "resource": "chat"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        -100
+      ],
+      "id": "243f20c9-7ef7-4450-b911-30bccaad8b60",
+      "name": "Telegram",
+      "webhookId": "4a640184-dc65-47d0-b04a-6fe538b3dd63"
+    },
+    {
+      "parameters": {
+        "operation": "get"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -420,
+        100
+      ],
+      "id": "918d9dae-a183-45fa-82d6-72fa3f57ad0a",
+      "name": "Gmail",
+      "webhookId": "711ab5b7-411c-4c51-aa58-b903fcaff876"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        100
+      ],
+      "id": "3c4e9eda-407a-47c1-8dfe-2789c02df941",
+      "name": "Email Trigger (IMAP)"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -420,
+        300
+      ],
+      "id": "ebe78036-9d21-457c-9359-15c6345f4475",
+      "name": "Airtable"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        500
+      ],
+      "id": "75ed1a71-dc1d-4169-b370-591e2451cc00",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger nodes \nTrigger Node adalah tombol start-nya workflow di n8n.\nDia yang bilang: “Ayo mulai sekarang!”",
+        "height": 120,
+        "width": 460,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -780,
+        -860
+      ],
+      "id": "f019f986-805b-4191-85af-92638fa07a5a",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Action Nodes\nAction Node adalah bagian dari workflow yang melakukan sebuah aksi (tindakan). Action Node adalah node yang disuruh \"melakukan sesuatu\" saat workflow dijalankan.\nBiasanya Action Node ditempatkan setelah Trigger\n",
+        "height": 140,
+        "width": 500,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -840
+      ],
+      "id": "c905bb54-e43a-484a-b825-9911f9588d76",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Utility Nodes\nUtility Node adalah alat bantu.\nDia tidak mengirim atau menerima data dari luar, tapi mengolah atau memodifikasi data di tengah-tengah workflow. alat bantu untuk mengolah, memfilter, atau memproses data sebelum diteruskan.\nMereka sangat penting supaya workflow kamu bisa pintar, fleksibel, dan rapi.\n\n",
+        "height": 180,
+        "width": 540,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -860
+      ],
+      "id": "50b72bad-1d08-443a-97b5-fa20e9cbafd3",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Code Nodes\nNode ini digunakan untuk menulis kode JavaScript sendiri untuk mengolah data sesuai keinginan kita.\nKalau node biasa belum cukup, Code Node jadi solusi fleksibel.\nContoh: gabung nama depan & belakang, hitung diskon, atau ubah format teks.\nGampangnya: ini adalah \"kotak serbaguna\" tempat kamu bisa nulis logika sendiri pakai kode\n",
+        "height": 200,
+        "width": 540,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        -880
+      ],
+      "id": "d5aec8c6-2ddf-4417-b092-f20836875060",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Agen Nodes\nAgent Nodes adalah node khusus yang menggunakan AI atau model pintar (seperti ChatGPT) untuk berpikir, menganalisis, atau mengambil keputusan dalam workflow\nAgent Nodes = otak AI dalam workflow kamu.\nMereka bisa berpikir, menganalisis, dan menghasilkan jawaban seperti manusia\n",
+        "height": 180,
+        "width": 540,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        -880
+      ],
+      "id": "dc5380c6-6e18-4c0b-b4ac-c9fe09aa3d33",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## 11 Action Nodes yang Sering Dipakai & Harus Kamu Tahu\n1. 📧 Send Email / Gmail\nFungsi: Mengirim email otomatis (bisa pakai SMTP atau Gmail).\n\nGunanya: Kirim notifikasi, laporan, atau email balasan otomatis.\n\n2. 🌐 HTTP Request\nFungsi: Menghubungkan n8n dengan API dari tool lain.\n\nGunanya: Bisa ambil data, kirim data, update data ke layanan manapun yang punya API.\n\n⚡ Ini node paling fleksibel!\n\n3. 📄 Google Sheets\nFungsi: Tambah, update, atau hapus data di Google Sheet.\n\nGunanya: Simpan leads, hasil form, database ringan.\n\n4. 📋 Notion / Airtable\nFungsi: Menambahkan atau mengedit data di database visual.\n\nGunanya: Buat dashboard data otomatis dari chatbot, form, dsb.\n\n5. 📁 Write Binary File / Move Binary Data\nFungsi: Simpan file (gambar, PDF, dll) yang diproses oleh workflow.\n\nGunanya: Download file dari email/API lalu simpan atau kirim ke Telegram.\n\n6. 💬 Telegram / Discord / WhatsApp (Send Message)\nFungsi: Mengirim pesan ke bot/chat secara otomatis.\n\nGunanya: Bot customer service, reminder otomatis, atau broadcast.\n\n7. 🛠️ Set\nFungsi: Menambahkan atau memodifikasi field/data.\n\nGunanya: Buat field baru sebelum dikirim ke node berikutnya.\n\n8. 🔍 IF\nFungsi: Kondisi logika (jika A maka lakukan ini, jika B maka lakukan itu).\n\nGunanya: Workflow lebih pintar & dinamis.\n\n9. 🔀 Switch\nFungsi: Seperti IF, tapi bisa cek lebih dari 2 kondisi sekaligus.\n\nGunanya: Cocok untuk alur dengan banyak pilihan.\n\n10. 🧹 Filter\nFungsi: Menyaring data yang masuk berdasarkan kriteria tertentu.\n\nGunanya: Hanya proses data yang sesuai kebutuhan.\n\n11. 📆 Date & Time\nFungsi: Atur, format, atau hitung waktu & tanggal.\n\nGunanya: Kirim pesan berdasarkan waktu, logika waktu, reminder, dll.\n\nKalau kamu kuasai 11 node ini, kamu udah bisa bangun 90% workflow automation umum — dari kirim email otomatis, simpan data, sampai integrasi API!",
+        "height": 1200,
+        "width": 740
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -660
+      ],
+      "id": "17f6cf77-4646-447c-a7c0-7eb8794566b1",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## Utility Nodes yang Sering Dipakai & Wajib Diketahui Pemula\n1. 🛠️ Set\nFungsi: Menambahkan atau mengubah data (misal: tambah field status: done).\n\nGunanya: Bikin data jadi rapi sebelum dikirim ke email, sheet, API, dll.\n\n2. 🔍 IF\nFungsi: Mengecek kondisi (\"Kalau A, lakukan ini. Kalau B, lakukan itu\").\n\nGunanya: Workflow jadi lebih pintar dan fleksibel.\n\n3. 🔀 Switch\nFungsi: Seperti IF, tapi bisa cek banyak kondisi sekaligus.\n\nGunanya: Buat logika bercabang, cocok buat chatbot, survey, dll.\n\n4. 🧹 Filter\nFungsi: Hanya meloloskan data yang memenuhi syarat tertentu.\n\nGunanya: Menyaring data sebelum dikirim ke step selanjutnya.\n\n5. 🧩 Merge\nFungsi: Menggabungkan data dari dua node berbeda.\n\nGunanya: Saat kamu butuh data dari 2 sumber jadi satu output.\n\n6. 🧮 Function / Function Item\nFungsi: Menulis skrip kecil (JavaScript) untuk proses logika khusus.\n\nGunanya: Bikin manipulasi data yang kompleks atau custom.\n\n7. 🕒 Date & Time\nFungsi: Atur dan olah waktu (format ulang, tambahkan waktu, hitung selisih).\n\nGunanya: Kirim pesan berdasarkan tanggal, buat reminder, validasi waktu.\n\n8. 🧷 Split In Batches\nFungsi: Memecah data besar jadi kelompok kecil.\n\nGunanya: Hindari overload API, kirim data per bagian, cocok buat ribuan data.\n\n9. 🔄 loOp\nFungsi: Tidak melakukan apa-apa, tapi bisa bantu debug atau sekadar jembatan.\n\nGunanya: Untuk testing dan struktur alur workflow.\n\n10. 📂 Rename Keys\nFungsi: Ganti nama field dalam data.\n\nGunanya: Sinkronisasi data antar platform yang pakai nama field berbeda.\n\n🚀 Kesimpulan untuk Pemula:\nUtility nodes ini ibarat kotak peralatan utama di n8n. Kamu akan sangat sering menggunakannya untuk memastikan data masuk dan keluar dengan rapi dan logis.",
+        "height": 1080,
+        "width": 760
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -640
+      ],
+      "id": "71868f2d-9745-49e1-a72b-f30eca33b6b0",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## Di Code Nodes, sebenarnya cuma ada 2 node utama yang sering dipakai:\n1. 🧠 Function Node\n✅ Mengolah seluruh array data sekaligus (semua item dalam 1 proses).\n\nCocok buat:\n\nMenyeleksi data (filter)\n\nMenggabungkan data\n\nMembuat struktur data baru\n\nContoh: Ambil semua email yang berisi kata “promo”.\n\n2. 🔹 Function Item Node\n✅ Mengolah per item data (satu baris per satu baris).\n\nCocok buat:\n\nTambahin field baru ke tiap data\n\nModifikasi nama, harga, status, dsb\n\nUbah format data (tanggal, angka, teks)\n\nContoh: Tambahkan kata “| Digital Santuy” di belakang nama:\n\n⚠️ Catatan:\nSemua code node pakai JavaScript. Jadi kamu cukup belajar dasar JS, nggak perlu jago dulu.\n\nBiasanya, Function Item lebih sering dipakai oleh pemula karena lebih simpel dan langsung per baris.\n\n🛠 Tips Buat Pemula:\nPakai Function Item dulu buat belajar, karena nggak perlu mikirin array.\n\nKalau kamu dapat data banyak (misalnya dari Airtable), dan mau ngolah semua baris, baru pakai Function.",
+        "height": 860,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        -640
+      ],
+      "id": "cf50e218-957e-448d-9c45-8ed22fcfa61e",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "## 5 nodes AI Agent yang paling sering dipakai dan WAJIB kamu kenal\n1. 🧠 AI Chat Agent\nFungsinya: Buat chatbot AI yang bisa ngobrol layaknya manusia.\n\nCocok untuk: Balas pesan Telegram, WhatsApp, atau Webchat pakai AI.\n\nKelebihan: Bisa \"inget\" percakapan sebelumnya (pakai memory).\n\n2. 😊 Sentiment Analysis\nFungsinya: Mendeteksi nada pesan (positif, netral, negatif).\n\nCocok untuk: Mengetahui apakah pelanggan sedang marah, senang, atau biasa saja.\n\nContoh: Kalau pesan negatif → kirim ke tim CS atau minta maaf otomatis.\n\n3. 📄 Prompt Template / AI Prompt\nFungsinya: Membuat AI membalas atau menjawab sesuatu berdasarkan perintah (prompt).\n\nCocok untuk: Buat ringkasan, balas email, bikin caption otomatis, dll.\n\nContoh Prompt:\n\"Buatkan caption Instagram promosi kopi yang santai dan lucu.\"\n\n4. 📘 Document Loader & Document Reader\nFungsinya: Membaca isi file (PDF, Word, CSV, dll) lalu bisa diproses oleh AI.\n\nCocok untuk:\n\nBaca isi CV dan kasih ringkasan\n\nBaca laporan keuangan dan ambil insight\n\nBisa dikombinasikan dengan AI Chat Agent.\n\n5. 🗃️ Data Store Agent (Memory)\nFungsinya: Menyimpan data percakapan / memori jangka pendek.\n\nCocok untuk: Chatbot yang bisa “ingat” siapa nama pelanggan, pesanan sebelumnya, dsb.",
+        "height": 820,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        -640
+      ],
+      "id": "376083c4-11f1-4353-8e4f-1fbdfa1c239c",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        3380,
+        -680
+      ],
+      "id": "4c4824c2-c4d5-42bf-8d98-1f0f40b4f369",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Tools Agent\nFungsi: Menggabungkan kekuatan AI dengan berbagai tools eksternal.\n\nCocok untuk: Workflow kompleks yang memerlukan interaksi dengan API, database, atau layanan pihak ketiga.\n\nKelebihan: Dapat menggunakan berbagai tools seperti HTTP Request, Google Sheets, Notion, dan lainnya dalam satu alur kerja.",
+        "height": 260,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        -460
+      ],
+      "id": "d3cca37e-fb70-434d-87e8-1140cdfde6b5",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        -660
+      ],
+      "id": "2e779bdd-73ce-466f-bb55-3129d5788a48",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "331aaf3c-25b2-4d75-8b03-d3e8f66047fd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b049fdc00c4e5016f217d3606666fd1b969a7aee41a995048a732ec0d4cb8cc"
+  },
+  "id": "FOfp65Wq9RDyAydG",
+  "tags": []
+}

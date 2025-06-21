@@ -1,0 +1,287 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        -40
+      ],
+      "id": "0d4dc2b8-10c4-4f3b-bd05-cadb24530c6d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        100,
+        -40
+      ],
+      "id": "376a5e7a-5758-42b5-9e62-cb5c77eaf172",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "zGwFYUyaN1wztxHr",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        80
+      ],
+      "id": "d83f1c3a-8f12-4bbc-8043-b5008ba12c64",
+      "name": "Telegram",
+      "webhookId": "7945b79a-5e3a-4bf8-b93d-399463b02f52",
+      "credentials": {
+        "telegramApi": {
+          "id": "dezMA1cWCxMtbCZQ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "makinamaze@gmail.com",
+          "mode": "list",
+          "cachedResultName": "makinamaze@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        300
+      ],
+      "id": "35c764bd-6f65-4f1d-af5f-5a9c0413c763",
+      "name": "delete event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "q6givQZrXD77yWKZ",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "makinamaze@gmail.com",
+          "mode": "list",
+          "cachedResultName": "makinamaze@gmail.com"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        600,
+        300
+      ],
+      "id": "22511f54-3044-4466-9622-af3fe55c69c3",
+      "name": "get event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "q6givQZrXD77yWKZ",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "makinamaze@gmail.com",
+          "mode": "list",
+          "cachedResultName": "makinamaze@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        460,
+        300
+      ],
+      "id": "89db0dab-da91-4670-a724-f9dff8b258da",
+      "name": "create event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "q6givQZrXD77yWKZ",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        120,
+        300
+      ],
+      "id": "58e599d1-1a0a-487d-8e30-bceec338c3a3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nskgYMj3pdmGnSsJ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "gunakan format waktu indonesia {{ $now }} \nselalu pakai bahasa indonesia\nkamu adalah asisten saya dalam membuat penjadwalan. gunakan tool google calendar sebagai alat penjadwalan.\nsaya ingin kamu setiap kali membuat jadwal harus membuat ID event\nbuat format balasan yang simple dan mudah di baca"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        200,
+        80
+      ],
+      "id": "a697a8af-efde-4093-ae40-1bfe8fc95e67",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        80
+      ],
+      "id": "352fdd6e-afef-47f0-aece-9732788bcae0",
+      "name": "Telegram Trigger",
+      "webhookId": "06a01452-fcfa-441f-b0bb-5a71e553f353",
+      "credentials": {
+        "telegramApi": {
+          "id": "dezMA1cWCxMtbCZQ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delete event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "76817e0b-dc70-485c-9cfb-11a67a7ab0e7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a2578f324c64ae031388e1eccd6c9da2c5d133e139014606f0e94be75f9e5a33"
+  },
+  "id": "YXPUP3IvF4GLQqod",
+  "tags": []
+}
