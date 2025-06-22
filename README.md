@@ -1,7 +1,10 @@
 # File Projek json n8n
 file json untuk workflow sederhana Ai automation di n8n, basic pembuatan AI bot sederhana
 
-### Untuk Tutorial Edit dan Pembuatan full Video Bisa Cek Di Youtube dan Tiktok Hardi | Digital Santuy
+Tutorial Edit dan Pembuatan full Video Youtube dan Tiktok Hardi | Digital Santuy 
+[Panduan Lengkap Tiktok](https://tiktok.com/@hardi.digitalsantuy).
+[Panduan Lengkap Youtube](https://www.youtube.com/@hardi.digitalsantuy).
+
 
 ## Dokumentasi File
 Projek json untuk n8n.io
