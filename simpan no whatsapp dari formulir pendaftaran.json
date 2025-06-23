@@ -1,0 +1,334 @@
+{
+  "name": "Formulir pendaftaran whatsapp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7ac16857-173f-489b-991c-ce0744b09847",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "95bf94d8-4d84-4f1c-a44a-10b7e5c2a9aa",
+      "name": "Webhook",
+      "webhookId": "7ac16857-173f-489b-991c-ce0744b09847"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.body }}",
+        "options": {
+          "systemMessage": "=kamu adalah asistem pendaftaran layani para pendaftar dengan baik..\n\nketika ada kata daftar kamu harus memberikan format ini kepada konsumen untuk di isi hanya jika ada kata atau kalimat daftar ya :\nnama :\nemail :\nalamat :\n\ningat hanya berikan respon kepada konsumen ini saja jika ada kata kata daftar\n\n\"nama :\nemail :\nalamat :\"\n\nlalu Insert timestamps, no wa, nama, email, alamat ke kolom google sheets yang sesuai.\n\nuntuk format no wa ambil dari sini no wa : {{ $json.body.from }}\n\njika pesan berhasil di simpan, berikan respon \"data berhasil di simpan\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ],
+      "id": "c97fa338-caf9-405d-b234-19bd90c60196",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        200,
+        180
+      ],
+      "id": "1b00aed4-0888-4dba-bc7a-d99bc78cc567",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kCchrL33sTDfLvnm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1er0cN9nZZDDGgHA89_I-1IesyNRey_hM2zNF9h84FoU",
+          "mode": "list",
+          "cachedResultName": "Formulir pendaftaran",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1er0cN9nZZDDGgHA89_I-1IesyNRey_hM2zNF9h84FoU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Daftar 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1er0cN9nZZDDGgHA89_I-1IesyNRey_hM2zNF9h84FoU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamps": "={{ $now.format('dd-MM-yyyy') }}",
+            "no wa": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('no_wa', ``, 'string') }}",
+            "nama": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nama', ``, 'string') }}",
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', ``, 'string') }}",
+            "alamat": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('alamat', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamps",
+              "displayName": "Timestamps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "no wa",
+              "displayName": "no wa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nama",
+              "displayName": "nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "alamat",
+              "displayName": "alamat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        380,
+        180
+      ],
+      "id": "d644c54d-43b3-4632-a387-67c177d426f9",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VaIY4sswE6TXyUk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.notif.my.id/api/v2/send-message",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "8Ie39vzMU2zPCXw7m51749821253611"
+            },
+            {
+              "name": "receiver",
+              "value": "={{ $('Webhook').item.json.body.from }}"
+            },
+            {
+              "name": "mtype",
+              "value": "text"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "readmessage",
+              "value": "yes"
+            },
+            {
+              "name": "id",
+              "value": "={{ $('Webhook').item.json.body.id }}"
+            },
+            {
+              "name": "duration",
+              "value": "3000"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        0
+      ],
+      "id": "286f13ff-8671-4ba4-866b-af42dcd74164",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "11Nq_6p-kk2d6jmEAiG8-xbGWuLe_94kOab_iqRjkJkk",
+          "mode": "list",
+          "cachedResultName": "test coba",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Nq_6p-kk2d6jmEAiG8-xbGWuLe_94kOab_iqRjkJkk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 61723711,
+          "mode": "list",
+          "cachedResultName": "kontak whatsapp",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Nq_6p-kk2d6jmEAiG8-xbGWuLe_94kOab_iqRjkJkk/edit#gid=61723711"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "No WA": "={{ $json.body.sender.split('@')[0] }}",
+            "Nama": "={{ $json.body.pushName }}"
+          },
+          "matchingColumns": [
+            "No WA"
+          ],
+          "schema": [
+            {
+              "id": "No WA",
+              "displayName": "No WA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        20,
+        120
+      ],
+      "id": "e69becd5-278e-4eb3-8af5-f4da71719864",
+      "name": "scrape no whatsapp",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VaIY4sswE6TXyUk",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "scrape no whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1e26b31e-acf6-4c95-bd37-51d61db29d61",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "620f7d369d62cd0b3b8e217519baa15f7a742bea6fb72a19cef2961af9ef672d"
+  },
+  "id": "eYGT3XdDOL3tPtv7",
+  "tags": []
+}
