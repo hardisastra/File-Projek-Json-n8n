@@ -17,5 +17,6 @@ Projek json untuk n8n.io
 - [Formulir Pendaftaran Whatsapp dengan google spreadsheet](./formulir%20pendaftaran%20whatsapp.json)
 - [Input data Otomatis ke spreadsheet](./input%20data%20otomatis%20ke%20sheet.json)
 - [Ai Whatsapp asisten Penjadwalan dengan Google Calendar](./whatsapp_aiasisten_penjadwalan.json)
+- [Simpan Semua no whatsapp dari formulir pendaftaran](./simpan%20no%20whatsapp%20dari%20formulir%20pendaftaran.json)
 
 
