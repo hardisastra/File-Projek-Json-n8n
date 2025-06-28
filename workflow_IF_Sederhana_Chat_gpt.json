@@ -1,0 +1,731 @@
+{
+  "name": "workflow Chat gpt",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "chatbot",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Webhook Chat Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1240,
+        -680
+      ],
+      "id": "dc04a1f2-28d9-4777-a243-7c3c2f6ecb6c",
+      "webhookId": "4573bb2c-86cb-42cf-a421-6aa1378d74e1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.chatInput }}",
+              "operation": "contains",
+              "value2": "pesan"
+            },
+            {
+              "value1": "={{ $json.chatInput }}",
+              "operation": "contains",
+              "value2": "order"
+            },
+            {
+              "value1": "={{ $json.chatInput }}",
+              "operation": "contains",
+              "value2": "beli"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "name": "IF 1 - Langsung Pesan?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1080,
+        -680
+      ],
+      "id": "41f487d0-3b64-4e75-94ad-901cc917e827"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Kirim Balasan Produk",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        -680
+      ],
+      "id": "e62d22e8-68d5-42a0-a9db-b37f4039c726"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.body }}",
+        "options": {
+          "systemMessage": "=Kamu adalah asisten chatbot dari sebuah toko kopi bernama \"Kopi Santuy\". Tugas kamu adalah membantu menjelaskan produk kopi yang tersedia kepada pelanggan. Jawablah dengan ramah, santai, tapi tetap informatif.\n\nBerikut daftar produk:\n1. **Espresso** – Rp15.000  \n   Kopi hitam pekat tanpa gula, cocok untuk pecinta rasa kopi asli.\n2. **Americano** – Rp18.000  \n   Espresso dicampur air panas, rasanya lebih ringan dari espresso.\n3. **Cappuccino** – Rp20.000  \n   Campuran espresso, susu, dan foam. Cocok untuk yang suka kopi lembut.\n4. **Latte** – Rp22.000  \n   Kopi dengan banyak susu, creamy dan cocok buat nongkrong santai.\n5. **Kopi Susu Gula Aren** – Rp23.000  \n   Perpaduan kopi, susu, dan manisnya gula aren.\n6. **Cold Brew** – Rp25.000  \n   Diseduh dingin selama 12 jam, rasanya halus dan tidak asam.\n\nJika pelanggan bertanya seperti:\n- \"Ada kopi apa aja?\"\n- \"Berapa harga cappuccino?\"\n- \"Kopi yang manis apa ya?\"\n\nJawablah berdasarkan daftar kopi di atas.\n\nJika pelanggan mengirim pesan yang mengandung kata seperti: \"revisi\", \"ubah\", \"ganti\", \"edit\", \"tambah pesanan\", \"tambah\", \"nambah\", pada intinya konsumen mau mengubah data orderan atau menambah orderan kamu harus langsung membalas dengan ramah dan memberi petunjuk sederhana melalui chat. kamu harus memberikan format ini kepada konsumen untuk di isi\n\nbuat format seperti ini agar mudah di isi oleh konsumen\n\n** tambah/revisi Orderan (untuk tambah Pesanan jangan lupa isi kembali orderan sebelumnya agar data terinput)\n\n- Jenis Kopi dan Jumlah : \n- Alamat : \n\n⚠️ Tapi jika pelanggan menyebut kata seperti **\"pesan\", \"order\", atau \"beli\"** dalam kalimatnya, cukup jawab:\n\n> \"Silakan lanjut ke Asisten Pemesanan ya, saya bantu arahkan sekarang 👇\nisi data pemesanan ini\n- Jenis Kopi dan Jumlah : \n- Alamat : \n\"\n\nLalu akhiri respons kamu agar diarahkan ke AI Order Bot (dalam sistem).\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        40
+      ],
+      "id": "6aeb7038-004e-40ef-96b4-f2a05131e65a",
+      "name": "AI Chatbot prodak"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -880,
+        -680
+      ],
+      "id": "c10e732a-5d64-4a5f-8bae-9460e58b3869",
+      "name": "When chat message received",
+      "webhookId": "a5d9eb19-4033-4d44-a4b8-1c52a5828505"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        240
+      ],
+      "id": "cacc9a83-c799-4ea5-995e-c8ef9c1236ae",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kCchrL33sTDfLvnm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -240
+      ],
+      "id": "66ef09b8-5e8d-458d-a3a4-d9cd2406f198",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kCchrL33sTDfLvnm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "89ef2ac1-343a-4505-b675-77350d22f62d",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"pesan\") }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "5e2df697-2c02-4ef3-ac6f-60c728c8e176",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"beli\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7d278db4-48a7-4adc-9bd0-c94b9a6e3ef3",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"order\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "de6512e9-e8da-4a59-ab2f-34f6accae1a9",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"tambah orderan\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "651538b3-3827-4e65-a7e8-ac6f6d02eba8",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"Revisi Orderan\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -940,
+        -280
+      ],
+      "id": "1d13bb82-f6f3-4d68-ab4c-5de43d56c31c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5e2df697-2c02-4ef3-ac6f-60c728c8e176",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"jenis kopi\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7d278db4-48a7-4adc-9bd0-c94b9a6e3ef3",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"jumlah\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "335b50d6-ba8d-4621-96dc-4dc683a054c1",
+              "leftValue": "={{ $json.body.body.toLowerCase().includes(\"alamat\") }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -520,
+        -120
+      ],
+      "id": "e15ede6a-2c6d-4585-8d06-5e7d668f1020",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.notif.my.id/api/v2/send-message",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "8KIOY5MsxZF6m71UJq1750242449537"
+            },
+            {
+              "name": "receiver",
+              "value": "={{ $('Webhook').item.json.body.from }}"
+            },
+            {
+              "name": "mtype",
+              "value": "text"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "readmessage",
+              "value": "yes"
+            },
+            {
+              "name": "id",
+              "value": "={{ $('Webhook').item.json.body.id }}"
+            },
+            {
+              "name": "duration",
+              "value": "3000"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        380,
+        -240
+      ],
+      "id": "9cb2b170-b571-4604-99b0-3eba459a2e9b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d0d26457-b8d0-47c4-9c6d-3436870bcdd4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1340,
+        -280
+      ],
+      "id": "595d9412-2dc2-4b59-b8d6-671ad11c711a",
+      "name": "Webhook",
+      "webhookId": "d0d26457-b8d0-47c4-9c6d-3436870bcdd4"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "11Nq_6p-kk2d6jmEAiG8-xbGWuLe_94kOab_iqRjkJkk",
+          "mode": "list",
+          "cachedResultName": "test coba",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Nq_6p-kk2d6jmEAiG8-xbGWuLe_94kOab_iqRjkJkk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 918865895,
+          "mode": "list",
+          "cachedResultName": "laporan penjualan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11Nq_6p-kk2d6jmEAiG8-xbGWuLe_94kOab_iqRjkJkk/edit#gid=918865895"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "No whatsapp": "={{ $('Webhook').item.json.body.from.split('@') [0] }}",
+            "Timestamps": "={{ $now.format('dd-MM-yyyy hh:dd') }}",
+            "Nama": "={{ $('Webhook').item.json.body.pushName }}",
+            "Jenis Kopi dan Jumlah": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Jenis_Kopi_dan_Jumlah', ``, 'string') }}",
+            "Alamat": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Alamat', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "No whatsapp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamps",
+              "displayName": "Timestamps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "No whatsapp",
+              "displayName": "No whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Jenis Kopi dan Jumlah",
+              "displayName": "Jenis Kopi dan Jumlah",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Alamat",
+              "displayName": "Alamat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        20,
+        -240
+      ],
+      "id": "c230b2db-0d96-4dfc-9128-7b8d2cbe02a6",
+      "name": "Laporan Penjualan",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5VaIY4sswE6TXyUk",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Nodes IF Order\n**Berisi parameter untuk mengarahkan konsumen ke ai order jika parameter salahsatunya true\n\nValue 1 (pilih bolean > is true)\n\n{{ $json.body.body.toLowerCase().includes(\"isi dengan parameter\") }}\n\n\nCondition IF\n(OR)",
+        "height": 360,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1080,
+        -480
+      ],
+      "id": "9e5f33d3-05e6-4ceb-b54f-07b8cee11647",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Nodes Data order\n**Berisi parameter untuk mengarahkan konsumen ke ai order jika semua kondisi Sesuai\n\nValue 1 (pilih bolean > is true)\n\n{{ $json.body.body.toLowerCase().includes(\"isi dengan parameter\") }}\n\n\nCondition IF\n(and) ",
+        "height": 360,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        -320
+      ],
+      "id": "06ec883b-a78b-439a-be32-ec9c93e3b43d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.body }}",
+        "options": {
+          "systemMessage": "=Kamu adalah asisten chatbot dari sebuah toko kopi bernama Kopi Santuy. Tugasmu adalah membantu mencatat pesanan pelanggan secara rapi agar bisa langsung dicatat ke Google Sheets Laporan Penjualan.\n\nSpreadsheet memiliki format kolom berikut:\n\n- Timestamps\n\n- No whatsapp\n\n- Nama\n\n- Jenis Kopi dan Jumlah\n\n- Alamat\n\nJika pelanggan mengirim pesan yang mengandung kata seperti: \"pesan\", \"mau pesan\", \"cara memesan\", \"beli kopi\", kamu harus langsung membalas dengan ramah dan memberi petunjuk sederhana untuk melakukan pemesanan melalui chat kamu harus memberikan format ini kepada konsumen untuk di isi\n\nbuat format seperti ini agar mudah di isi oleh konsumen\n\n- Jenis Kopi dan Jumlah : \n- Alamat : \n\nJika pelanggan mengirim pesan yang mengandung kata seperti: \"revisi\", \"ubah\", \"ganti\", \"edit\", \"tambah pesanan\", \"tambah\", \"nambah\", pada intinya konsumen mau mengubah data orderan atau menambah orderan kamu harus langsung membalas dengan ramah dan memberi petunjuk sederhana melalui chat. kamu harus memberikan format ini kepada konsumen untuk di isi\n\nbuat format seperti ini jika mengandung kata seperti: \"revisi\", \"ubah\", \"ganti\", \"edit\", \"tambah pesanan\", \"tambah\", \"nambah\" agar mudah di isi oleh konsumen\n\n* tambah/revisi Orderan... untuk tambah Pesanan jangan lupa isi kembali orderan sebelumnya agar data terinput\n\n- Jenis Kopi dan Jumlah :  \n- Alamat : \n\nIngat : selalu Insert data Timestamps, No whatsapp, Nama, Jenis Kopi dan Jumlah, Alamat, ke kolom google sheets Laporan Penjualan yang sesuai.\n\njika pesanan berhasil di input ke google sheets Laporan Penjualan, berikan respon :  \n\"Pesanan kamu sedang kami proses, tunggu sebentar ya! 🙏\"\n\njika data pesanan belum berhasil di input ke google sheets Laporan Penjualan atau belum terinput, berikan respon :  \n\"kirimkan datamu kembali data belum terinput 🙏\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -480
+      ],
+      "id": "8c7d19d8-523e-4e49-b594-360497f88602",
+      "name": "AI Order Bot"
+    },
+    {
+      "parameters": {
+        "content": "## Ai Order\n**system messege Prompt\n\nKamu adalah asisten chatbot dari sebuah toko kopi bernama Kopi Santuy. Tugasmu adalah membantu mencatat pesanan pelanggan secara rapi agar bisa langsung dicatat ke Google Sheets Laporan Penjualan.\n\nSpreadsheet memiliki format kolom berikut:\n\n- Timestamps\n\n- No whatsapp\n\n- Nama\n\n- Jenis Kopi dan Jumlah\n\n- Alamat\n\nJika pelanggan mengirim pesan yang mengandung kata seperti: \"pesan\", \"mau pesan\", \"cara memesan\", \"beli kopi\", kamu harus langsung membalas dengan ramah dan memberi petunjuk sederhana untuk melakukan pemesanan melalui chat kamu harus memberikan format ini kepada konsumen untuk di isi\n\nbuat format seperti ini agar mudah di isi oleh konsumen\n\n- Jenis Kopi dan Jumlah : \n- Alamat : \n\nJika pelanggan mengirim pesan yang mengandung kata seperti: \"revisi\", \"ubah\", \"ganti\", \"edit\", \"tambah pesanan\", \"tambah\", \"nambah\", pada intinya konsumen mau mengubah data orderan atau menambah orderan kamu harus langsung membalas dengan ramah dan memberi petunjuk sederhana melalui chat. kamu harus memberikan format ini kepada konsumen untuk di isi\n\nbuat format seperti ini jika mengandung kata seperti: \"revisi\", \"ubah\", \"ganti\", \"edit\", \"tambah pesanan\", \"tambah\", \"nambah\" agar mudah di isi oleh konsumen\n\n* tambah/revisi Orderan... untuk tambah Pesanan jangan lupa isi kembali orderan sebelumnya agar data terinput\n\n- Jenis Kopi dan Jumlah :  \n- Alamat : \n\nIngat : selalu Insert data Timestamps, No whatsapp, Nama, Jenis Kopi dan Jumlah, Alamat, ke kolom google sheets Laporan Penjualan yang sesuai.\n\njika pesanan berhasil di input ke google sheets Laporan Penjualan, berikan respon :  \n\"Pesanan kamu sedang kami proses, tunggu sebentar ya! 🙏\"\n\njika data pesanan belum berhasil di input ke google sheets Laporan Penjualan atau belum terinput, berikan respon :  \n\"kirimkan datamu kembali data belum terinput 🙏\"",
+        "height": 1100,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -720
+      ],
+      "id": "be10d0ed-e63d-4d09-8527-d39024016eeb",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Ai Produck knowlage\n**system messege Prompt\n\nKamu adalah asisten chatbot dari sebuah toko kopi bernama \"Kopi Santuy\". Tugas kamu adalah membantu menjelaskan produk kopi yang tersedia kepada pelanggan. Jawablah dengan ramah, santai, tapi tetap informatif.\n\nBerikut daftar produk:\n1. **Espresso** – Rp15.000  \n   Kopi hitam pekat tanpa gula, cocok untuk pecinta rasa kopi asli.\n2. **Americano** – Rp18.000  \n   Espresso dicampur air panas, rasanya lebih ringan dari espresso.\n3. **Cappuccino** – Rp20.000  \n   Campuran espresso, susu, dan foam. Cocok untuk yang suka kopi lembut.\n4. **Latte** – Rp22.000  \n   Kopi dengan banyak susu, creamy dan cocok buat nongkrong santai.\n5. **Kopi Susu Gula Aren** – Rp23.000  \n   Perpaduan kopi, susu, dan manisnya gula aren.\n6. **Cold Brew** – Rp25.000  \n   Diseduh dingin selama 12 jam, rasanya halus dan tidak asam.\n\nJika pelanggan bertanya seperti:\n- \"Ada kopi apa aja?\"\n- \"Berapa harga cappuccino?\"\n- \"Kopi yang manis apa ya?\"\n\nJawablah berdasarkan daftar kopi di atas.\n\nJika pelanggan mengirim pesan yang mengandung kata seperti: \"revisi\", \"ubah\", \"ganti\", \"edit\", \"tambah pesanan\", \"tambah\", \"nambah\", pada intinya konsumen mau mengubah data orderan atau menambah orderan kamu harus langsung membalas dengan ramah dan memberi petunjuk sederhana melalui chat. kamu harus memberikan format ini kepada konsumen untuk di isi\n\nbuat format seperti ini agar mudah di isi oleh konsumen\n\n** tambah/revisi Orderan (untuk tambah Pesanan jangan lupa isi kembali orderan sebelumnya agar data terinput)\n\n- Jenis Kopi dan Jumlah : \n- Alamat : \n\n⚠️ Tapi jika pelanggan menyebut kata seperti **\"pesan\", \"order\", atau \"beli\"** dalam kalimatnya, cukup jawab:\n\n> \"Silakan lanjut ke Asisten Pemesanan ya, saya bantu arahkan sekarang 👇\nisi data pemesanan ini\n- Jenis Kopi dan Jumlah : \n- Alamat : \n\"\n\nLalu akhiri respons kamu agar diarahkan ke AI Order Bot (dalam sistem).\n",
+        "height": 1100,
+        "width": 700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        -720
+      ],
+      "id": "f969a230-5c5d-457f-bcb0-66abe5bbecd9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## http request\n**isi sesuai whatsapp gateway masing-masing",
+        "height": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -380
+      ],
+      "id": "5a339812-e5e0-464b-a7f5-af57ebfccdd4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## webhook\n**jika kamu pakai lokal host pakai url dari NGROK agar bisa kirim data",
+        "height": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1400,
+        -400
+      ],
+      "id": "ab815a50-d5d3-4902-bfa9-664c314c01ff",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## google spreadsheet\n**data google spreadsheet operation append or update\n\n- Timestamps isi : {{ $now.format('dd-MM-yyyy hh:dd') }}\n- no whatsapp : Di ambil dari data webhook\n- Nama : Di ambil dari data webhook\n- Jenis Kopi dan Jumlah : by model ai chatbot\n- Alamat : by model ai chatbot",
+        "height": 220,
+        "width": 500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -760
+      ],
+      "id": "16db4085-bdd8-49e2-8231-1445784b142f",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Model Gemini \nFlash 2.0 Flash LITE (free)\n",
+        "height": 80,
+        "width": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -100
+      ],
+      "id": "943716c0-b9d0-40e7-9997-8966d6403c9b",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Model Gemini \nFlash 2.0 Flash (free)\n",
+        "height": 80,
+        "width": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        380
+      ],
+      "id": "84ef1b22-0338-4db9-820f-62f82a7c5669",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Optional\nkalian bisa menambahkan simple memory",
+        "height": 120,
+        "width": 220
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        40
+      ],
+      "id": "0876e382-a07e-433b-a294-6370218ccd9a",
+      "name": "Sticky Note9"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Chat Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "IF 1 - Langsung Pesan?": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "AI Chatbot prodak": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Chatbot prodak",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Order Bot",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Order Bot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "AI Order Bot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Chatbot prodak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Laporan Penjualan": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Order Bot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Order Bot": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7e20a4f2-6b50-4122-8b77-09d1a3f62b6d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "620f7d369d62cd0b3b8e217519baa15f7a742bea6fb72a19cef2961af9ef672d"
+  },
+  "id": "kQ8N65htAub086nA",
+  "tags": []
+}
