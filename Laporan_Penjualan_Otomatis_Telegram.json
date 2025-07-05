@@ -1,0 +1,931 @@
+{
+  "name": "Laporan Penjualan Otomatis Telegram",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2400,
+        100
+      ],
+      "id": "934ce73c-49a5-430c-9f0a-60cee60e19fa",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0",
+          "mode": "list",
+          "cachedResultName": "Training Data Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Data Menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1600,
+        80
+      ],
+      "id": "d8e6692b-e16b-419b-82d1-12608830e027",
+      "name": "Data Menu",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iTekRHYOWcztE4Im",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0",
+          "mode": "list",
+          "cachedResultName": "Training Data Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1082681545,
+          "mode": "list",
+          "cachedResultName": "Data Kategori",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit#gid=1082681545"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1600,
+        260
+      ],
+      "id": "6b8df57b-9db4-4205-92ce-f006f069e703",
+      "name": "Data Kategori",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iTekRHYOWcztE4Im",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const mappedData = $input.all()\n\nconst result = mappedData.map(data => ({\n  ...data.json\n}))\n\nreturn {\n    laporanPenjualanProduk: result\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1420,
+        80
+      ],
+      "id": "9cbd84f0-f2a8-4bd2-a40f-f77c08bbe735",
+      "name": "Mapping Data Produk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mappedData = $input.all()\n\nconst result = mappedData.map(data => ({\n  ...data.json\n}))\n\nreturn {\n    laporanPenjualanKategori: result\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1420,
+        260
+      ],
+      "id": "1ebe8454-7736-4a31-8222-a888b1a334c7",
+      "name": "Mapping Data Kategori"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1200,
+        160
+      ],
+      "id": "25bb7c94-e898-4152-979a-53ff3120c2ac",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Berikut adalah dua dataset dari Google Sheets. Tolong analisis menu yang harus di-takedown, yang mana yang bagus, rekomendasinya apa dan insight yang bisa diambil. Tampilkan hasilnya dalam bahasa Indonesia.\n\nSheet A (laporan penjualan produk):\n{{ JSON.stringify($json.laporanPenjualanProduk) }}\n\nSheet B (laporan penjualan kategori):\n{{ JSON.stringify($json.laporanPenjualanKategori) }}",
+        "options": {
+          "systemMessage": "=Anda adalah analis bisnis F&B yang ahli dalam membaca data penjualan dari Google Sheets dan memberikan rekomendasi berdasarkan performa penjualan tiap menu. Anda akan menerima dua dataset: satu berisi data per produk, dan satu lagi per kategori.\n\nTugas Anda adalah:\n- Mengidentifikasi produk atau menu yang penjualannya lemah dan layak untuk dihentikan (takedown)\n- Menentukan produk atau kategori yang memiliki performa bagus\n- Memberikan insight berdasarkan kontribusi penjualan (jumlah unit dan rupiah)\n- Menyusun rekomendasi bisnis untuk pengembangan menu ke depan\n- Menyampaikan hasil analisis dalam bahasa Indonesia yang jelas dan ringkas\n- Tampilkan hasil dalam format bullet point atau heading jika relevan\n- Hasil output berupa HTML\n\nFokus pada insight yang actionable, bukan hanya deskriptif."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1000,
+        160
+      ],
+      "id": "15232e2c-ff9a-485b-a019-18051a918e3d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "const isiMentah = $input.first().json.output\n\n// 1. Bersihkan block markdown\nconst isiBersih = isiMentah\n  .replace(/```html\\n?/gi, '')   // hapus pembuka\n  .replace(/```/g, '')           // hapus penutup\n  .trim();\n\n// 2. Bungkus jadi HTML utuh\nconst htmlFinal = `\n<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Laporan Penjualan</title>\n    <style>\n      body { font-family: Arial, sans-serif; padding: 24px; color: #222; }\n      h1, h2, h3 { color: #333; }\n      ul { margin-bottom: 16px; }\n    </style>\n  </head>\n  <body>\n    ${isiBersih}\n  </body>\n</html>\n`;\n\nreturn [{\n  json: {\n    source: JSON.stringify(htmlFinal),  // ← penting untuk PDFShift\n    landscape: false,\n    use_print: true\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        160
+      ],
+      "id": "898fbd11-b389-44e3-a682-c6b75abc4e2a",
+      "name": "Mapping to HTML"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdfshift.io/v3/convert/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "sk_ebb2f0d6eddd267b4e10a3c76147cce317a4590f"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"source\": {{ $json.source }},\n  \"landscape\": false,\n  \"use_print\": false\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -460,
+        160
+      ],
+      "id": "b56dfbb2-fb80-406f-94ab-c893740d1c83",
+      "name": "HTML to PDF"
+    },
+    {
+      "parameters": {
+        "sendTo": "farisnura@gmail.com",
+        "subject": "Laporan Penjualan Menu",
+        "emailType": "text",
+        "message": "Terlampir laporan penjualan dalam format PDF",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -2180,
+        100
+      ],
+      "id": "b30cf808-2b8f-404e-881b-8a3ea15b6db9",
+      "name": "Send PDF to Email",
+      "webhookId": "efd2479b-9937-462c-a37a-b93837f99603"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        320
+      ],
+      "id": "e1923d5d-bf7c-4a71-ba8a-0791970fd3aa",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rNBwyxpDStkj4VBB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/laporan",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "c3ffe2a9-2b3a-40b1-a1ea-60776255286d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LAPORAN"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "244bc629-0667-4b70-89b0-87faff74eb3f",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/readme",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Informasi Bot"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "73367d7d-2bf4-4298-8bb4-48ad915dfd87",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ai Agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2080,
+        620
+      ],
+      "id": "a6c39ad7-2f8c-4bfc-b92d-953db4e2994b",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2500,
+        620
+      ],
+      "id": "ea2196e7-b83d-4a23-9254-1bc12a2c916a",
+      "name": "Telegram Trigger",
+      "webhookId": "a2a059cc-db7a-46a7-9f26-c14b9ece0d71",
+      "credentials": {
+        "telegramApi": {
+          "id": "qLP6TLaeWafQyjw8",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "1758420679",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "ini datanya"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "16f07370-ea06-413c-961f-5872555a8c8b",
+      "name": "Send a document",
+      "webhookId": "8a4bcdec-ddaa-473a-a219-72f97ac9f13f",
+      "credentials": {
+        "telegramApi": {
+          "id": "qLP6TLaeWafQyjw8",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').first().json.message.text }}",
+        "options": {
+          "systemMessage": "=Berikut adalah data menu dan kategori kopi kami:\n\n{{ $json.dataFormatted }}\n\nGunakan data di atas untuk menjawab pertanyaan dari pengguna secara akurat."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        1100
+      ],
+      "id": "88bfa0db-832f-4763-a947-19ee3b021821",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        1280
+      ],
+      "id": "de08a4bb-01f8-4c6e-b680-16852313ae0f",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rNBwyxpDStkj4VBB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1758420679",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        1100
+      ],
+      "id": "6d017639-6746-45f9-94f5-6c4decf3516c",
+      "name": "Send a text message",
+      "webhookId": "9937812b-99ff-4e82-8fd2-0494e15971cb",
+      "credentials": {
+        "telegramApi": {
+          "id": "qLP6TLaeWafQyjw8",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Ubah array of object jadi string\nconst formatted = items.map(item => {\n  const obj = item.json;\n  return Object.entries(obj)\n    .map(([key, value]) => `${key}: ${value}`)\n    .join(', ');\n}).join('\\n');\n\nreturn [\n  {\n    json: {\n      dataFormatted: formatted\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        1100
+      ],
+      "id": "63542b18-cc7a-403c-af3a-8e9707630de6",
+      "name": "Code"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1280,
+        1100
+      ],
+      "id": "a0d69b96-077f-4faa-9031-95cbf49ae368",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0",
+          "mode": "list",
+          "cachedResultName": "Training Data Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Data Menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1500,
+        1000
+      ],
+      "id": "5e6d2828-9171-4ad5-869f-d74ed6593a03",
+      "name": "Data Menu1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iTekRHYOWcztE4Im",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0",
+          "mode": "list",
+          "cachedResultName": "Training Data Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1082681545,
+          "mode": "list",
+          "cachedResultName": "Data Kategori",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kMxUs53I1m2rqURmBP7gjB0fSvEuRBSPuhB3qKmhQw0/edit#gid=1082681545"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1500,
+        1200
+      ],
+      "id": "9b70078e-1ef3-4abf-af03-8083a6b72363",
+      "name": "Data Kategori1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iTekRHYOWcztE4Im",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=ai assistent bot\n\n/laporan = memberikan hasil analisis laporan berupa pdf\n/readme = cara menggunakan bot \n/mulaichat = chat dengan bot ai",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1300,
+        620
+      ],
+      "id": "39e2b7cd-49a0-4512-ba8f-7da5de6a10d1",
+      "name": "informasi BOT",
+      "webhookId": "3d791be0-2447-4c16-8d6f-6f92448f5af0",
+      "credentials": {
+        "telegramApi": {
+          "id": "qLP6TLaeWafQyjw8",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2400,
+        280
+      ],
+      "id": "b372f93e-0814-4dad-90c2-479da20b6d33",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Workflow Laporan penjualan ke PDF\n**ini adalah workflow Laporan penjualan yang nanti di analisa oleh ai agent yang nantinya di buat insigt dan ringkasan berupa PDF yang bisa di kirim ke action trigger\n\n## Credit WF by [Programmer30an](https://www.youtube.com/watch?v=uRihW6lvZuI&t=5s)",
+        "height": 600,
+        "width": 1600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1660,
+        -120
+      ],
+      "id": "24fac6dc-395c-4afb-9afa-6e3814116c57",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Informasi BOT\n**Nodes yang di pakai untuk memberikan informasi bagaimana caranya menggunakan BOT AI\n\nChat ID :\n{{ $json.message.chat.id }}\n\nText : (text isi sesuai kebutuhan)\nai assistent bot\n\n/laporan = memberikan hasil analisis laporan berupa pdf\n/readme = cara menggunakan bot \n/mulaichat = chat dengan bot ai",
+        "height": 300,
+        "width": 560,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        540
+      ],
+      "id": "7c835e7d-b6a2-46b1-9307-890df2e34f97",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent Data Laporan Penjualan Real Time\n**ini adalah WF dengan AI agent sebagai operator untuk memberikan informasi tentang data Laporan penjualan secara real time",
+        "height": 560,
+        "width": 1400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1660,
+        880
+      ],
+      "id": "9768716d-a46c-4cac-8dca-8ed8781fd184",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## alternatif action triiger Nodes\n**ini adalah alternatif action trigger nodes yang bisa di pakai untuk WF ini",
+        "height": 440,
+        "width": 660,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2460,
+        0
+      ],
+      "id": "857d0a7d-9e57-4eca-b205-85446f02741e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "path": "7deeb05a-08d1-4ab4-9e70-8d84142042d4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2180,
+        280
+      ],
+      "id": "bc43c116-5c46-40f2-b852-8bc7a1a8507f",
+      "name": "Webhook",
+      "webhookId": "7deeb05a-08d1-4ab4-9e70-8d84142042d4"
+    },
+    {
+      "parameters": {
+        "content": "## Kontainer Jalur WF\n**Nodes Switch Menghubungkan Chat trigger dengan WF\n",
+        "height": 280,
+        "width": 440,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2280,
+        520
+      ],
+      "id": "34821a61-34a1-4bc6-a430-f0d409a7204e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## CODE\nconst items = $input.all();\n\n// Ubah array of object jadi string\nconst formatted = items.map(item => {\n  const obj = item.json;\n  return Object.entries(obj)\n    .map(([key, value]) => `${key}: ${value}`)\n    .join(', ');\n}).join('\\n');\n\nreturn [\n  {\n    json: {\n      dataFormatted: formatted\n    }\n  }\n];\n\n\n## AI Agent\nPrompt (User Message) :\n\n{{ $('Telegram Trigger').first().json.message.text }}\n\nSystem Message :\n\nBerikut adalah data menu dan kategori kopi kami:\n\n{{ $json.dataFormatted }}\n\nGunakan data di atas untuk menjawab pertanyaan dari pengguna secara akurat.\n",
+        "height": 680,
+        "width": 1400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        860
+      ],
+      "id": "00e128eb-5006-4432-8bb1-802d889f258c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Workflow Laporan penjualan ke PDF\nMapping data :\nconst mappedData = $input.all()\n\nconst result = mappedData.map(data => ({\n  ...data.json\n}))\n\nreturn {\n    laporanPenjualanProduk: result\n}\n\n\n## Mapping to html :\n\nconst isiMentah = $input.first().json.output\n\n// 1. Bersihkan block markdown\nconst isiBersih = isiMentah\n  .replace(/```html\\n?/gi, '')   // hapus pembuka\n  .replace(/```/g, '')           // hapus penutup\n  .trim();\n\n// 2. Bungkus jadi HTML utuh\nconst htmlFinal = `\n<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Laporan Penjualan</title>\n    <style>\n      body { font-family: Arial, sans-serif; padding: 24px; color: #222; }\n      h1, h2, h3 { color: #333; }\n      ul { margin-bottom: 16px; }\n    </style>\n  </head>\n  <body>\n    ${isiBersih}\n  </body>\n</html>\n`;\n\nreturn [{\n  json: {\n    source: JSON.stringify(htmlFinal),  // ← penting untuk PDFShift\n    landscape: false,\n    use_print: true\n  }\n}];\n\n## Json HTML TO PDF :\n\n{\n  \"source\": {{ $json.source }},\n  \"landscape\": false,\n  \"use_print\": false\n} \n\n",
+        "height": 860,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -120
+      ],
+      "id": "ebfe84e2-2d48-4f20-868b-4e1ea648d4b0",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# Ai Agent\n## Prompt (User Message) :\nBerikut adalah dua dataset dari Google Sheets. Tolong analisis menu yang harus di-takedown, yang mana yang bagus, rekomendasinya apa dan insight yang bisa diambil. Tampilkan hasilnya dalam bahasa Indonesia.\n\nSheet A (laporan penjualan produk):\n{{ JSON.stringify($json.laporanPenjualanProduk) }}\n\nSheet B (laporan penjualan kategori):\n{{ JSON.stringify($json.laporanPenjualanKategori) }}\n\n## System Message :\nAnda adalah analis bisnis F&B yang ahli dalam membaca data penjualan dari Google Sheets dan memberikan rekomendasi berdasarkan performa penjualan tiap menu. Anda akan menerima dua dataset: satu berisi data per produk, dan satu lagi per kategori.\n\nTugas Anda adalah:\n- Mengidentifikasi produk atau menu yang penjualannya lemah dan layak untuk dihentikan (takedown)\n- Menentukan produk atau kategori yang memiliki performa bagus\n- Memberikan insight berdasarkan kontribusi penjualan (jumlah unit dan rupiah)\n- Menyusun rekomendasi bisnis untuk pengembangan menu ke depan\n- Menyampaikan hasil analisis dalam bahasa Indonesia yang jelas dan ringkas\n- Tampilkan hasil dalam format bullet point atau heading jika relevan\n- Hasil output berupa HTML\n\nFokus pada insight yang actionable, bukan hanya deskriptif.",
+        "height": 600,
+        "width": 1200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        -760
+      ],
+      "id": "10d56c11-caff-48a9-b8d9-e942115dd344",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Data Menu": {
+      "main": [
+        [
+          {
+            "node": "Mapping Data Produk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Kategori": {
+      "main": [
+        [
+          {
+            "node": "Mapping Data Kategori",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapping Data Produk": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapping Data Kategori": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Mapping to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapping to HTML": {
+      "main": [
+        [
+          {
+            "node": "HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Send a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Data Menu",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Data Kategori",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "informasi BOT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data Kategori1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Data Menu1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a document": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Menu1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Kategori1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "91ce75e3-6092-48c0-98a8-f2eab257e98b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ad485c582a726954e18c47ba5ad6b0e9748031bc48cd921296338b6b63f76150"
+  },
+  "id": "CEoOS85z0I0PWr71",
+  "tags": []
+}
