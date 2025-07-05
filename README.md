@@ -19,4 +19,5 @@ Projek json untuk n8n.io
 - [Ai Whatsapp asisten Penjadwalan dengan Google Calendar](./whatsapp_aiasisten_penjadwalan.json)
 - [Simpan Semua no whatsapp dari formulir pendaftaran](./simpan%20no%20whatsapp%20dari%20formulir%20pendaftaran.json)
 - [Workflow Sederhana IF Chat GPT](./workflow_IF_Sederhana_Chat_gpt.json)
+- [Laporan Penjualan Otomatis kirim PDF harian bulanan mingguan telegram](./Laporan_Penjualan_Otomatis_Telegram.json)
 
