@@ -1,0 +1,438 @@
+{
+  "name": "bot analisa pdf",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1020,
+        -120
+      ],
+      "id": "d65de579-2773-4f8d-ba47-4f4d8b9a1b1b",
+      "name": "Telegram Trigger",
+      "webhookId": "7b8d3884-1dab-4425-a999-d4c6a79698c7",
+      "credentials": {
+        "telegramApi": {
+          "id": "58nU5gg6WHQHVUHY",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.document.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -340,
+        -220
+      ],
+      "id": "d75ee9c3-9291-4cb1-9434-e0a8a5638f98",
+      "name": "Get a file",
+      "webhookId": "71ac7e8c-14f0-48ca-b30a-68ea4f86b3d5",
+      "credentials": {
+        "telegramApi": {
+          "id": "58nU5gg6WHQHVUHY",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot<<isi bot telegram>>/{{ $json.result.file_path }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        -280
+      ],
+      "id": "b9a9a241-c3ee-4fdd-82c3-7e9e6013c999",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -280
+      ],
+      "id": "51b14ea8-dff7-4eee-96c6-41b1e3a05232",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Berikut ini adalah isi dari sebuah dokumen yang dikirim pengguna:\n\n{{ $json.text }}\n\nTolong bacalah dokumen ini secara menyeluruh, lalu berikan penjelasan singkat namun akurat tentang inti atau isi utama dari dokumen tersebut.  \nJelaskan secara ringkas tapi tetap jelas dan mudah dipahami oleh orang awam.\n\nJika dokumen terlalu panjang, cukup ambil poin-poin penting atau ringkasan umum yang mencakup keseluruhan isi.",
+        "options": {
+          "systemMessage": "Kamu adalah asisten AI yang menganalisis isi dokumen. Tugasmu adalah membaca dokumen yang diberikan, lalu menyampaikan ringkasan atau penjelasan isinya secara akurat dan tidak mengarang. Jangan jawab jika tidak ada dokumen yang diberikan."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        380,
+        -280
+      ],
+      "id": "993c892a-d9c4-47a3-a2f1-d4a750a6da6c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -120
+      ],
+      "id": "13516b36-8641-4f35-a0b9-ba9c486b9ea5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rNBwyxpDStkj4VBB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        -280
+      ],
+      "id": "0e8b34ec-a6c7-4404-92e4-272dac341389",
+      "name": "Send a text message",
+      "webhookId": "3121f0b8-1084-4798-bbe1-060baa25dacd",
+      "credentials": {
+        "telegramApi": {
+          "id": "58nU5gg6WHQHVUHY",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "58c3fefe-cfe6-46b7-84f8-2d0b9a2ff35d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "file pdf"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9d99fe79-07a4-4d65-88c9-348188665d60",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text messege"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -700,
+        -120
+      ],
+      "id": "c43d3e71-e938-4173-b5d9-306ef0771fde",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=ini adalah bot khusus menganalisa file jadi tolong kirim kan file saja",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        140
+      ],
+      "id": "3fcddbb2-87c6-4c34-ba78-3d9166991403",
+      "name": "Send a text message1",
+      "webhookId": "3121f0b8-1084-4798-bbe1-060baa25dacd",
+      "credentials": {
+        "telegramApi": {
+          "id": "58nU5gg6WHQHVUHY",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## untuk memisahkan alur kerja input file dan text\n",
+        "height": 260,
+        "width": 340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -220
+      ],
+      "id": "cbe72728-1c18-4aa7-b501-f2717e5f9782",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Readme\nkalian tinggal ganti API tele dan http request, action trigger bebas bisa di ubah sesuai kebutuhan",
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -580
+      ],
+      "id": "32ca0c1b-4a5d-4201-8f96-de30d95df5d6",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Tutorial lengkap cara membuat bisa lihat di sini :\n### [TIKTOK](https://www.tiktok.com/@hardi.digitalsantuy/video/7524252887141108993?lang=en) \n### [YOUTUBE](https://www.youtube.com/watch?v=Bwo4yTLHm7c)",
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -580
+      ],
+      "id": "ea720530-e529-441e-9108-d8c224ac1531",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Mengambil file dari telegram\n{{ $json.message.document.file_id }}",
+        "height": 300,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        -360
+      ],
+      "id": "db130b79-160c-45c9-8599-41fc5afe4f13",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Download file \nhttps://api.telegram.org/file/bot(isi bot telegram)/{{ $json.result.file_path }}",
+        "height": 300,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -400
+      ],
+      "id": "162d2ef4-8ca1-4a72-b3ad-8067bcc5a684",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent\nprompt user messege :\nBerikut ini adalah isi dari sebuah dokumen yang dikirim pengguna:\n\n{{ $json.text }}\n\nTolong bacalah dokumen ini secara menyeluruh, lalu berikan penjelasan singkat namun akurat tentang inti atau isi utama dari dokumen tersebut.  \nJelaskan secara ringkas tapi tetap jelas dan mudah dipahami oleh orang awam.\n\nJika dokumen terlalu panjang, cukup ambil poin-poin penting atau ringkasan umum yang mencakup keseluruhan isi.\n\nsystem messegae :\nKamu adalah asisten AI yang menganalisis isi dokumen. Tugasmu adalah membaca dokumen yang diberikan, lalu menyampaikan ringkasan atau penjelasan isinya secara akurat dan tidak mengarang. Jangan jawab jika tidak ada dokumen yang diberikan.",
+        "height": 380,
+        "width": 580
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -40
+      ],
+      "id": "ed2a08e1-1bec-4686-bcab-59abf6d7512f",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## send text a message\nBot ini khusus untuk analisa file. Silakan kirim file yang ingin dianalisis.",
+        "height": 280,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        40
+      ],
+      "id": "8cee2d21-ad91-4a49-ac3c-d1b4905627b8",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ca90e23c-38c2-41ec-8665-3f259de25552",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ad485c582a726954e18c47ba5ad6b0e9748031bc48cd921296338b6b63f76150"
+  },
+  "id": "fp9VuZPbopg0V4nf",
+  "tags": []
+}
