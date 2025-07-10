@@ -21,4 +21,5 @@ Projek json untuk n8n.io
 - [Workflow Sederhana IF Chat GPT](./workflow_IF_Sederhana_Chat_gpt.json)
 - [Laporan Penjualan Otomatis kirim PDF harian bulanan mingguan telegram](./Laporan_Penjualan_Otomatis_Telegram.json)
 - [bot analisa pdf menggunakan AI telegram](./Bot_Telegram_AI%20untuk_Analisa_File_Otomatis.json)
+- [Broadcast Whatsapp aman dari Banned](./Broadcast_WhatsApp_AMAN_dari_BANNED.json)
 
