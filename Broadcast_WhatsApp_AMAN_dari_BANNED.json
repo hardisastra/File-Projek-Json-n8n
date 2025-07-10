@@ -1,0 +1,382 @@
+{
+  "name": "broadcasting",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        -100
+      ],
+      "id": "9daaa778-f3bc-4dfa-a1fa-ab8f10ab3709",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zDl6cpaZg0kS_f8G5LCbI6m0RMRHWcJZ9839JHWw8FQ",
+          "mode": "list",
+          "cachedResultName": "Broadcast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zDl6cpaZg0kS_f8G5LCbI6m0RMRHWcJZ9839JHWw8FQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "data broadcast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zDl6cpaZg0kS_f8G5LCbI6m0RMRHWcJZ9839JHWw8FQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -240,
+        -100
+      ],
+      "id": "106e5910-6fbe-4651-a5db-3043179307ce",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iTekRHYOWcztE4Im",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhook.site/88f29ec4-69ad-4d37-8bdd-15747d244468",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "8KIOY5MsxZF6m71UJq1750242449537"
+            },
+            {
+              "name": "receiver",
+              "value": "={{ $json['no whatsapp'] }}"
+            },
+            {
+              "name": "mtype",
+              "value": "text"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json['isi pesan'] }}"
+            },
+            {
+              "name": "readmessage",
+              "value": "yes"
+            },
+            {
+              "name": "id",
+              "value": "0B37DE10241D7DAE4CCE6F4F4CB74337"
+            },
+            {
+              "name": "duration",
+              "value": "3000"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        -80
+      ],
+      "id": "8c8a740a-8536-48c2-b61d-d7c7be2226c4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        -100
+      ],
+      "id": "62b23ca5-867b-44ac-a000-2e907030e1e9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": "={{[3, 4, 5, 6][Math.floor(Math.random() * 4)]}}\n"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        -80
+      ],
+      "id": "50f6b11f-10ab-4117-b44d-b5bac21cec91",
+      "name": "Wait",
+      "webhookId": "495587cf-5aa1-43dc-83fe-5a614bb38fe4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zDl6cpaZg0kS_f8G5LCbI6m0RMRHWcJZ9839JHWw8FQ",
+          "mode": "list",
+          "cachedResultName": "Broadcast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zDl6cpaZg0kS_f8G5LCbI6m0RMRHWcJZ9839JHWw8FQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "data broadcast",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zDl6cpaZg0kS_f8G5LCbI6m0RMRHWcJZ9839JHWw8FQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "={{ $('HTTP Request').item.json.data }}",
+            "no whatsapp": "={{ $('Get row(s) in sheet').item.json['no whatsapp'] }}"
+          },
+          "matchingColumns": [
+            "no whatsapp"
+          ],
+          "schema": [
+            {
+              "id": "nama",
+              "displayName": "nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "no whatsapp",
+              "displayName": "no whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "isi pesan",
+              "displayName": "isi pesan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1300,
+        -80
+      ],
+      "id": "ee75e08f-16df-4bec-8ee2-2f3ea6f89c94",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iTekRHYOWcztE4Im",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Kode Javascript Waktu Random number\n{{[3, 4, 5, 6][Math.floor(Math.random() * 4)]}}\n\nNumber bisa isi bebas\n",
+        "height": 220,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -160
+      ],
+      "id": "18dd565d-70ac-4cfb-8a62-e45d934ff883",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### Sheet untuk mengisi Status\nambil drag n drop dari nodes sebelumnya\n",
+        "height": 220,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        -160
+      ],
+      "id": "55d16438-a8ab-4576-9266-82a635cc53a3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### loop isi default",
+        "height": 220,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        40,
+        -160
+      ],
+      "id": "b037fae4-ed6d-48ac-91a9-ff2e2403007c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### http request\nisi sesuai whatsapp gateway masing masing",
+        "height": 220,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -160
+      ],
+      "id": "666694e7-ab38-4de6-993e-8be3c2766c9f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Tutorial lengkap cara membuat bisa lihat di sini :\n### [TIKTOK](https://www.tiktok.com/@hardi.digitalsantuy/video/7524996791452847376?lang=en) \n### [YOUTUBE](https://www.youtube.com/watch?v=rdD-_x4_M98)",
+        "width": 440,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        -320
+      ],
+      "id": "0e79f0fb-af4e-4dd9-bcc6-bb191f61e309",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "95ce0b7a-4b64-4f5d-9e9f-eafc68b2f3e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ad485c582a726954e18c47ba5ad6b0e9748031bc48cd921296338b6b63f76150"
+  },
+  "id": "p48gdyZkoYLqCNwW",
+  "tags": []
+}
