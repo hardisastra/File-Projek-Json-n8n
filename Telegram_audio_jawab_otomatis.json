@@ -1,0 +1,467 @@
+{
+  "name": "Telegram_audio_jawab_otomatis",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        60
+      ],
+      "id": "b176ee98-e547-46c2-9e01-d3298964424a",
+      "name": "Telegram Trigger",
+      "webhookId": "339643d6-a6dd-4b34-950a-91046f759a73",
+      "credentials": {
+        "telegramApi": {
+          "id": "fL9p2hrcJPppXe9N",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "4d6c5cd3-1f51-4088-9aaf-e7684c42d8aa"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9a87abe6-9c18-47d4-9060-a2b214cc016d",
+                    "leftValue": "={{ $json.message.chat }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -180,
+        60
+      ],
+      "id": "35557d6a-0c56-4aef-90f5-aaeea313950e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        -540
+      ],
+      "id": "3ac3808c-0655-42d4-add6-d8ca9f71acd8",
+      "name": "Get a file",
+      "webhookId": "28298434-d6f7-400e-8b40-e92a4d12b7f4",
+      "credentials": {
+        "telegramApi": {
+          "id": "fL9p2hrcJPppXe9N",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        -100
+      ],
+      "id": "9afc8757-c28c-4dc5-8d62-b0edb25efe6d",
+      "name": "Wait",
+      "webhookId": "aa6153cd-082b-442f-a228-b606f9295582"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }} {{ $json.message.text }}",
+        "options": {
+          "systemMessage": "saya ingin kamu membalas chat dengan sopan dan santun"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        460,
+        80
+      ],
+      "id": "08c862a9-0218-49ec-82cb-add145ab1533",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        440,
+        240
+      ],
+      "id": "c65f62fe-0a6c-4e51-b9f2-4d1fff4667ba",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rNBwyxpDStkj4VBB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        80
+      ],
+      "id": "91a6e279-346e-4a88-9c45-53f72b86b603",
+      "name": "Send a text message",
+      "webhookId": "a4235030-491d-42f1-a9df-582f9af23cca",
+      "credentials": {
+        "telegramApi": {
+          "id": "fL9p2hrcJPppXe9N",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Alur Workflow\nA[Telegram Trigger (kirim audio)] --> B[Get File]\nB --> C[HTTP Request Upload to AssemblyAI]\nC --> D[HTTP Request Create Transcription]\nD --> E[Wait 10s]\nE --> F[HTTP Request Get Transcription Result]\nF --> G[AI Agent (opsional)]\nG --> H[Send Message ke Telegram]",
+        "height": 200,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -500
+      ],
+      "id": "557826c9-b039-4876-9c12-db265920c8ba",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot7300844927:AAERDpxOib1nwXB8uNYZ9CLOm1rgBUpKBgk/{{ $json.result.file_path }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -540
+      ],
+      "id": "91d95f52-13f2-4610-b98f-d7008c7ae102",
+      "name": "Download File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.assemblyai.com/v2/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "a9fdbc6eb7474b18bc1cc8fdd4bca734"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        -320
+      ],
+      "id": "0f4353dd-8da4-4add-979c-c92a0d5cd60f",
+      "name": "Upload To Assembly"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.assemblyai.com/v2/transcript",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            },
+            {
+              "name": "authorization",
+              "value": "a9fdbc6eb7474b18bc1cc8fdd4bca734"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"audio_url\": \"{{ $json.upload_url }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        -320
+      ],
+      "id": "d77514f2-aed8-495c-a179-e37560507b75",
+      "name": "Membuat Transcript"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.assemblyai.com/v2/transcript/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "a9fdbc6eb7474b18bc1cc8fdd4bca734"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        -100
+      ],
+      "id": "e01a960e-1ce9-4e4c-9222-35d80b211c11",
+      "name": "Hasil Transcript"
+    },
+    {
+      "parameters": {
+        "content": "## Parameter http Request\n**Download File\nurl : https://api.telegram.org/file/bot<api Telegram>/{{ $json.result.file_path }}\n\n**Upload to assemblyai\nurl : https://api.assemblyai.com/v2/upload\n\n**Membuat transcribe\nbody :\n{\n  \"audio_url\": \"{{ $json.upload_url }}\"\n}\n\n**hasil transcribe\nurl : https://api.assemblyai.com/v2/transcript/{{ $json.id }}",
+        "height": 400,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -480
+      ],
+      "id": "c4737126-cbcb-446b-82e9-6ae3963848b5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Tutorial lengkap cara membuat bisa lihat di sini :\n### [TIKTOK](https://www.tiktok.com/@hardi.digitalsantuy/video/7525867898569510160) \n### [YOUTUBE](https://www.youtube.com/watch?v=qF3jL2XTrH8)",
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -260
+      ],
+      "id": "94a479c6-2c8e-4a29-9c70-0c71ec84dc18",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Hasil Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Upload To Assembly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload To Assembly": {
+      "main": [
+        [
+          {
+            "node": "Membuat Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Membuat Transcript": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hasil Transcript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6df5e0b2-5793-4d23-b9ea-e420771f2a8e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ad485c582a726954e18c47ba5ad6b0e9748031bc48cd921296338b6b63f76150"
+  },
+  "id": "nTtWeOkGQdeoXawC",
+  "tags": []
+}
