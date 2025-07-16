@@ -1,0 +1,430 @@
+{
+  "name": "WF1 - Masukin Jadwal",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -480
+      ],
+      "name": "Telegram Trigger",
+      "id": "0caed9aa-f37f-4703-9017-37b9a265a3c0",
+      "webhookId": "c8a19eb5-c0dc-4b2c-9332-9d6dbd59df96",
+      "credentials": {
+        "telegramApi": {
+          "id": "esd5jjcdoJXgZgiY",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=Kamu adalah asisten penjadwalan.  \nTugas: ekstrak **tanggal, waktu, dan tugas** dari kalimat user, lalu kembalikan **HANYA** JSON murni tanpa back-tick.\n\nAturan:\n- Tanggal: konversi ke format YYYY-MM-DD  \n- Waktu: konversi ke format 24-jam (HH:MM)  \n- Task: teks tugas apa saja\n\nContoh input  → output  \n\"jadwal 15 juli 2025 4 sore lari\"  \n→ {\"Date\":\"2025-07-15\",\"Time\":\"16:00\",\"Task\":\"lari\"}\n\n\"jadwal besok 9 pagi presentasi\" (asumsikan hari+1)  \n→ {\"Date\":\"2025-07-16\",\"Time\":\"09:00\",\"Task\":\"presentasi\"}\n\nJika tidak bisa ekstrak, balas: {\"error\":\"format tidak dikenal\"}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -480
+      ],
+      "name": "AI Agent",
+      "id": "b1befc25-5339-43bf-afa5-5afde607a3f9"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aNPaLcOvN-_FUnDbcxJHltrRerGglzrje0aKirtQdoo",
+          "mode": "list",
+          "cachedResultName": "AgendaBot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aNPaLcOvN-_FUnDbcxJHltrRerGglzrje0aKirtQdoo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aNPaLcOvN-_FUnDbcxJHltrRerGglzrje0aKirtQdoo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.format('yyyy-MM-dd hh:dd') }}",
+            "Date": "={{ $json.Date }}",
+            "Time": "={{ $json.Time }}",
+            "Task": "={{ $json.Task }}",
+            "Status": "=planned"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Task",
+              "displayName": "Task",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1152,
+        -480
+      ],
+      "name": "Append to Sheet",
+      "id": "3abcfae6-0b8f-4dd6-a0b5-25f759dfc411",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YPZX851aXLuWVjV9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=✅ Agenda disimpan: {{ $json.Task }} pada {{ $json.Date }} {{ $json.Time }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -480
+      ],
+      "name": "Telegram Reply",
+      "id": "31714884-453f-4054-aa5f-d1b43cb1d269",
+      "webhookId": "87f9cb6e-19d6-461b-8ec4-e45d42561457",
+      "credentials": {
+        "telegramApi": {
+          "id": "esd5jjcdoJXgZgiY",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -304
+      ],
+      "name": "Google Gemini",
+      "id": "f96906e5-1c13-42e2-8804-db974cfd9f23",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PeuqoS1syFx8T9Oe",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil teks output\nconst raw = items[0].json.output;\n\n// Hilangkan ```json dan ```\nconst clean = raw.replace(/```json\\n|\\n```/g, '').trim();\n\n// Parse menjadi objek\nconst obj = JSON.parse(clean);\n\n// Return items baru\nreturn [{ json: obj }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        -480
+      ],
+      "id": "4a7597f6-dd2a-450a-9e30-26c2429627a6",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        48
+      ],
+      "name": "DailyReminder",
+      "id": "92e11b56-7497-4f03-a2f4-769bbd91a0ea"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aNPaLcOvN-_FUnDbcxJHltrRerGglzrje0aKirtQdoo",
+          "mode": "list",
+          "cachedResultName": "AgendaBot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aNPaLcOvN-_FUnDbcxJHltrRerGglzrje0aKirtQdoo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aNPaLcOvN-_FUnDbcxJHltrRerGglzrje0aKirtQdoo/edit#gid=0"
+        },
+        "combineFilters": "AND",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        384,
+        48
+      ],
+      "name": "Read Today",
+      "id": "73ba7828-a71e-446a-a539-7abb4a25fa41",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YPZX851aXLuWVjV9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1758420679",
+        "text": "={{ $json.reminderText }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        48
+      ],
+      "name": "Send Reminder",
+      "id": "4f619c3f-cfd0-4b5c-b1aa-0b20226837a9",
+      "webhookId": "4594d212-ca92-45a0-9415-dee589b427fd",
+      "credentials": {
+        "telegramApi": {
+          "id": "esd5jjcdoJXgZgiY",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst todayRows = items.filter(r => r.json.Date === today);\n\nconst text = todayRows.length\n  ? '📆 Agenda hari ini:\\n' + todayRows.map(r => `• ${r.json.Time} - ${r.json.Task}`).join('\\n')\n  : '🎉 Hari ini tidak ada agenda.';\n\nreturn [{ json: { reminderText: text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        48
+      ],
+      "id": "f1ac7c7a-5b4f-4f99-8b09-d56888280564",
+      "name": "filter today"
+    },
+    {
+      "parameters": {
+        "content": "## code \n// Ambil teks output\nconst raw = items[0].json.output;\n\n// Hilangkan ```json dan ```\nconst clean = raw.replace(/```json\\n|\\n```/g, '').trim();\n\n// Parse menjadi objek\nconst obj = JSON.parse(clean);\n\n// Return items baru\nreturn [{ json: obj }];\n\n\n\nFungsi kode tersebut membersihkan & mengubah teks JSON yang belum siap dipakai menjadi objek JavaScript yang siap dipakai oleh node berikutnya.\n\nKode itu “pembersih” supaya AI yang suka beri balasan dengan back-tick bisa langsung dipakai di node selanjutnya.",
+        "height": 432,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -640
+      ],
+      "id": "b0974f79-e7be-4684-b13f-4c790cd5e636",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Code\nconst today = new Date().toISOString().slice(0, 10);\nconst todayRows = items.filter(r => r.json.Date === today);\n\nconst text = todayRows.length\n  ? '📆 Agenda hari ini:\\n' + todayRows.map(r => `• ${r.json.Time} - ${r.json.Task}`).join('\\n')\n  : '🎉 Hari ini tidak ada agenda.';\n\nreturn [{ json: { reminderText: text } }];\n\n\n\n\n\n\nFungsi ini membuat pesan reminder harian berdasarkan data Google Sheet.",
+        "height": 352,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -128
+      ],
+      "id": "9d86c3eb-60f2-4fd4-bda0-4a499a3de7e0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Prompt AI Agent\nKamu adalah asisten penjadwalan.  \nTugas: ekstrak **tanggal, waktu, dan tugas** dari kalimat user, lalu kembalikan **HANYA** JSON murni tanpa back-tick.\n\nAturan:\n- Tanggal: konversi ke format YYYY-MM-DD  \n- Waktu: konversi ke format 24-jam (HH:MM)  \n- Task: teks tugas apa saja\n\nContoh input  → output  \n\"jadwal 15 juli 2025 4 sore lari\"  \n→ {\"Date\":\"2025-07-15\",\"Time\":\"16:00\",\"Task\":\"lari\"}\n\n\"jadwal besok 9 pagi presentasi\" (asumsikan hari+1)  \n→ {\"Date\":\"2025-07-16\",\"Time\":\"09:00\",\"Task\":\"presentasi\"}\n\nJika tidak bisa ekstrak, balas: {\"error\":\"format tidak dikenal\"}",
+        "height": 400,
+        "width": 544,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -240
+      ],
+      "id": "845e3867-062a-4c10-831e-8a35797f16d1",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Append to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DailyReminder": {
+      "main": [
+        [
+          {
+            "node": "Read Today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Today": {
+      "main": [
+        [
+          {
+            "node": "filter today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter today": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6c976abd-d680-4ad2-8d1a-d425a7819bcc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2dd72160859c450d8227f2fbc292f95274f1ce68f80818cc93d45d6993ef39fb"
+  },
+  "id": "Bb187VEykGJmxLGI",
+  "tags": []
+}
