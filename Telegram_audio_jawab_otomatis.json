@@ -202,7 +202,7 @@
     },
     {
       "parameters": {
-        "url": "=https://api.telegram.org/file/bot7300844927:AAERDpxOib1nwXB8uNYZ9CLOm1rgBUpKBgk/{{ $json.result.file_path }}",
+        "url": "=https://api.telegram.org/file/bot(your bot telegram)/{{ $json.result.file_path }}",
         "options": {
           "response": {
             "response": {
