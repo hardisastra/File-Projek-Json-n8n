@@ -29,7 +29,7 @@
         "promptType": "define",
         "text": "={{ $json.message.text }}",
         "options": {
-          "systemMessage": "=Kamu adalah asisten penjadwalan.  \nTugas: ekstrak **tanggal, waktu, dan tugas** dari kalimat user, lalu kembalikan **HANYA** JSON murni tanpa back-tick.\n\nAturan:\n- Tanggal: konversi ke format YYYY-MM-DD  \n- Waktu: konversi ke format 24-jam (HH:MM)  \n- Task: teks tugas apa saja\n\nContoh input  → output  \n\"jadwal 15 juli 2025 4 sore lari\"  \n→ {\"Date\":\"2025-07-15\",\"Time\":\"16:00\",\"Task\":\"lari\"}\n\n\"jadwal besok 9 pagi presentasi\" (asumsikan hari+1)  \n→ {\"Date\":\"2025-07-16\",\"Time\":\"09:00\",\"Task\":\"presentasi\"}\n\nJika tidak bisa ekstrak, balas: {\"error\":\"format tidak dikenal\"}"
+          "systemMessage": "=Kamu adalah asisten penjadwalan.  \nTugas: ekstrak **tanggal, waktu, dan tugas** dari kalimat user, lalu kembalikan **HANYA** JSON murni tanpa back-tick.\n\nAturan:\n- Tanggal: konversi ke format YYYY-MM-DD  \n- Waktu: konversi ke format 24-jam (HH:MM)  \n- Task: teks tugas apa saja\n\nContoh input  â†’ output  \n\"jadwal 15 juli 2025 4 sore lari\"  \nâ†’ {\"Date\":\"2025-07-15\",\"Time\":\"16:00\",\"Task\":\"lari\"}\n\n\"jadwal besok 9 pagi presentasi\" (asumsikan hari+1)  \nâ†’ {\"Date\":\"2025-07-16\",\"Time\":\"09:00\",\"Task\":\"presentasi\"}\n\nJika tidak bisa ekstrak, balas: {\"error\":\"format tidak dikenal\"}"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -138,7 +138,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "=✅ Agenda disimpan: {{ $json.Task }} pada {{ $json.Date }} {{ $json.Time }}",
+        "text": "=âœ… Agenda disimpan: {{ $json.Task }} pada {{ $json.Date }} {{ $json.Time }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
@@ -267,7 +267,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst todayRows = items.filter(r => r.json.Date === today);\n\nconst text = todayRows.length\n  ? '📆 Agenda hari ini:\\n' + todayRows.map(r => `• ${r.json.Time} - ${r.json.Task}`).join('\\n')\n  : '🎉 Hari ini tidak ada agenda.';\n\nreturn [{ json: { reminderText: text } }];"
+        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst todayRows = items.filter(r => r.json.Date === today);\n\nconst text = todayRows.length\n  ? 'ðŸ“† Agenda hari ini:\\n' + todayRows.map(r => `â€¢ ${r.json.Time} - ${r.json.Task}`).join('\\n')\n  : 'ðŸŽ‰ Hari ini tidak ada agenda.';\n\nreturn [{ json: { reminderText: text } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -280,7 +280,7 @@
     },
     {
       "parameters": {
-        "content": "## code \n// Ambil teks output\nconst raw = items[0].json.output;\n\n// Hilangkan ```json dan ```\nconst clean = raw.replace(/```json\\n|\\n```/g, '').trim();\n\n// Parse menjadi objek\nconst obj = JSON.parse(clean);\n\n// Return items baru\nreturn [{ json: obj }];\n\n\n\nFungsi kode tersebut membersihkan & mengubah teks JSON yang belum siap dipakai menjadi objek JavaScript yang siap dipakai oleh node berikutnya.\n\nKode itu “pembersih” supaya AI yang suka beri balasan dengan back-tick bisa langsung dipakai di node selanjutnya.",
+        "content": "## code \n// Ambil teks output\nconst raw = items[0].json.output;\n\n// Hilangkan ```json dan ```\nconst clean = raw.replace(/```json\\n|\\n```/g, '').trim();\n\n// Parse menjadi objek\nconst obj = JSON.parse(clean);\n\n// Return items baru\nreturn [{ json: obj }];\n\n\n\nFungsi kode tersebut membersihkan & mengubah teks JSON yang belum siap dipakai menjadi objek JavaScript yang siap dipakai oleh node berikutnya.\n\nKode itu â€œpembersihâ€ supaya AI yang suka beri balasan dengan back-tick bisa langsung dipakai di node selanjutnya.",
         "height": 432,
         "width": 592
       },
@@ -295,7 +295,7 @@
     },
     {
       "parameters": {
-        "content": "## Code\nconst today = new Date().toISOString().slice(0, 10);\nconst todayRows = items.filter(r => r.json.Date === today);\n\nconst text = todayRows.length\n  ? '📆 Agenda hari ini:\\n' + todayRows.map(r => `• ${r.json.Time} - ${r.json.Task}`).join('\\n')\n  : '🎉 Hari ini tidak ada agenda.';\n\nreturn [{ json: { reminderText: text } }];\n\n\n\n\n\n\nFungsi ini membuat pesan reminder harian berdasarkan data Google Sheet.",
+        "content": "## Code\nconst today = new Date().toISOString().slice(0, 10);\nconst todayRows = items.filter(r => r.json.Date === today);\n\nconst text = todayRows.length\n  ? 'ðŸ“† Agenda hari ini:\\n' + todayRows.map(r => `â€¢ ${r.json.Time} - ${r.json.Task}`).join('\\n')\n  : 'ðŸŽ‰ Hari ini tidak ada agenda.';\n\nreturn [{ json: { reminderText: text } }];\n\n\n\n\n\n\nFungsi ini membuat pesan reminder harian berdasarkan data Google Sheet.",
         "height": 352,
         "width": 528
       },
@@ -310,7 +310,7 @@
     },
     {
       "parameters": {
-        "content": "## Prompt AI Agent\nKamu adalah asisten penjadwalan.  \nTugas: ekstrak **tanggal, waktu, dan tugas** dari kalimat user, lalu kembalikan **HANYA** JSON murni tanpa back-tick.\n\nAturan:\n- Tanggal: konversi ke format YYYY-MM-DD  \n- Waktu: konversi ke format 24-jam (HH:MM)  \n- Task: teks tugas apa saja\n\nContoh input  → output  \n\"jadwal 15 juli 2025 4 sore lari\"  \n→ {\"Date\":\"2025-07-15\",\"Time\":\"16:00\",\"Task\":\"lari\"}\n\n\"jadwal besok 9 pagi presentasi\" (asumsikan hari+1)  \n→ {\"Date\":\"2025-07-16\",\"Time\":\"09:00\",\"Task\":\"presentasi\"}\n\nJika tidak bisa ekstrak, balas: {\"error\":\"format tidak dikenal\"}",
+        "content": "## Prompt AI Agent\nKamu adalah asisten penjadwalan.  \nTugas: ekstrak **tanggal, waktu, dan tugas** dari kalimat user, lalu kembalikan **HANYA** JSON murni tanpa back-tick.\n\nAturan:\n- Tanggal: konversi ke format YYYY-MM-DD  \n- Waktu: konversi ke format 24-jam (HH:MM)  \n- Task: teks tugas apa saja\n\nContoh input  â†’ output  \n\"jadwal 15 juli 2025 4 sore lari\"  \nâ†’ {\"Date\":\"2025-07-15\",\"Time\":\"16:00\",\"Task\":\"lari\"}\n\n\"jadwal besok 9 pagi presentasi\" (asumsikan hari+1)  \nâ†’ {\"Date\":\"2025-07-16\",\"Time\":\"09:00\",\"Task\":\"presentasi\"}\n\nJika tidak bisa ekstrak, balas: {\"error\":\"format tidak dikenal\"}",
         "height": 400,
         "width": 544,
         "color": 5
@@ -323,6 +323,22 @@
       ],
       "id": "845e3867-062a-4c10-831e-8a35797f16d1",
       "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Tutorial lengkap cara membuat bisa lihat di sini :\n### [TIKTOK](https://www.tiktok.com/@hardi.digitalsantuy/video/7527360547046657301) \n### [YOUTUBE](https://www.youtube.com/watch?v=-GkQ1UK6idM)\n\nHardi | Digital Santuy",
+        "height": 192,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -160
+      ],
+      "id": "f34c9c6e-49b5-4ddf-ba4e-a0b175bf4bab",
+      "name": "Sticky Note4"
     }
   ],
   "pinData": {},
@@ -420,7 +436,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "6c976abd-d680-4ad2-8d1a-d425a7819bcc",
+  "versionId": "962d9c89-fda3-4baa-a377-341f47aa99f3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "2dd72160859c450d8227f2fbc292f95274f1ce68f80818cc93d45d6993ef39fb"
